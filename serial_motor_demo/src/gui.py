@@ -1,45 +1,34 @@
-import rclpy
-from rclpy.node import Node
+#!/usr/bin/env python3
+import rospy
+import numpy as np
 import time
 from tkinter import *
 import math
-
 from serial_motor_demo_msgs.msg import MotorCommand
 from serial_motor_demo_msgs.msg import MotorVels
 from serial_motor_demo_msgs.msg import EncoderVals
+import serial
+from threading import Lock
+from serial.serialutil import SerialException
 
-
-class MotorGui(Node):
+class MotorGui():
 
     def __init__(self):
-        super().__init__('motor_gui')
 
-        self.publisher = self.create_publisher(MotorCommand, 'motor_command', 10)
+        self.publisher = rospy.Publisher('motor_command', MotorCommand, queue_size=10)
 
-        self.speed_sub = self.create_subscription(
-            MotorVels,
-            'motor_vels',
-            self.motor_vel_callback,
-            10)
-
-        self.encoder_sub = self.create_subscription(
-            EncoderVals,
-            'encoder_vals',
-            self.encoder_val_callback,
-            10)
+        self.speed_sub = rospy.Subscriber("motor_vels", MotorVels, self.motor_vel_callback)
+        self.encoder_sub = rospy.Subscriber("encoder_vals", EncoderVals, self.encoder_val_callback)
 
         self.tk = Tk()
         self.tk.title("Serial Motor GUI")
         root = Frame(self.tk)
         root.pack(fill=BOTH, expand=True)
 
-        
-
         Label(root, text="Serial Motor GUI").pack()
 
         mode_frame = Frame(root)
         mode_frame.pack(fill=X)
-
 
         self.mode_lbl = Label(mode_frame, text="ZZZZ")
         self.mode_lbl.pack(side=LEFT)
@@ -172,22 +161,23 @@ class MotorGui(Node):
         self.tk.update()
 
 
-
-
-
-def main(args=None):
+if __name__ == '__main__':
     
-    rclpy.init(args=args)
+    rospy.init_node('serial_motor_demo_gui', log_level=rospy.INFO)
+
+    # Get the actual node name in case it is set in the launch file
+    nodename = rospy.get_name()
 
     motor_gui = MotorGui()
 
-    rate = motor_gui.create_rate(20)    
-    while rclpy.ok():
-        rclpy.spin_once(motor_gui)
-        motor_gui.update()
+    idle = rospy.Rate(20)
+    then = rospy.Time.now()
+    
+    ###### main loop  ######
+    while not rospy.is_shutdown():
+      motor_gui.update()
 
+      idle.sleep()    
 
-    motor_gui.destroy_node()
-    rclpy.shutdown()
-
-
+    nodename.signal_shutdown('Node shutdown...')
+    rospy.shutdown()
