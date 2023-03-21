@@ -2,7 +2,7 @@
   <name>serial_motor_demo</name>
   <version>0.2.0</version>
   <description>
-    ROS Arduino Python.
+    ROS Serial Motor Demo Python.
   </description>
   <author>Patrick Goebel</author>
   <maintainer email="patrick@pirobot.org">Patrick Goebel</maintainer>
@@ -17,6 +17,6 @@
   <run_depend>geometry_msgs</run_depend>
   <run_depend>nav_msgs</run_depend>
   <run_depend>tf</run_depend>
-  <run_depend>ros_arduino_msgs</run_depend>
+  <run_depend>serial_motor_demo_msgs</run_depend>
   <run_depend>python-serial</run_depend>
 </package>

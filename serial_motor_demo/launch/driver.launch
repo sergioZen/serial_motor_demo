@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+   <node name="driver" pkg="serial_motor_demo" type="driver.py" output="screen">
+      <param name="serial_port" value="/dev/ttyUSB0"/>
+      <param name="baud_rate" value="57600"/>
+      <param name="loop_rate" value="30"/>
+      <param name="encoder_cpr" value="1920"/>
+   </node>
+</launch>

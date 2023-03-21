@@ -1,5 +1,6 @@
-import rclpy
-from rclpy.node import Node
+#!/usr/bin/env python3
+import rospy
+import numpy as np
 from serial_motor_demo_msgs.msg import MotorCommand
 from serial_motor_demo_msgs.msg import MotorVels
 from serial_motor_demo_msgs.msg import EncoderVals
@@ -7,54 +8,29 @@ import time
 import math
 import serial
 from threading import Lock
+from serial.serialutil import SerialException
 
-
-
-class MotorDriver(Node):
+class MotorDriver():
 
     def __init__(self):
-        super().__init__('motor_driver')
-
-
         # Setup parameters
+        self.encoder_cpr = rospy.get_param("~encoder_cpr", 0)
+        self.loop_rate = int(rospy.get_param("~loop_rate", 0))
+        self.serial_port = rospy.get_param("~serial_port", "/dev/ttyUSB0")
+        self.baud_rate = rospy.get_param("~baud_rate", 57600)
+        self.serial_debug = rospy.get_param("~serial_debug", False)
 
-        self.declare_parameter('encoder_cpr', value=0)
-        if (self.get_parameter('encoder_cpr').value == 0):
-            print("WARNING! ENCODER CPR SET TO 0!!")
-
-
-        self.declare_parameter('loop_rate', value=0)
-        if (self.get_parameter('loop_rate').value == 0):
-            print("WARNING! LOOP RATE SET TO 0!!")
-
-
-        self.declare_parameter('serial_port', value="/dev/ttyUSB0")
-        self.serial_port = self.get_parameter('serial_port').value
-
-
-        self.declare_parameter('baud_rate', value=57600)
-        self.baud_rate = self.get_parameter('baud_rate').value
-
-
-        self.declare_parameter('serial_debug', value=False)
-        self.debug_serial_cmds = self.get_parameter('serial_debug').value
-        if (self.debug_serial_cmds):
-            print("Serial debug enabled")
-
-
+        # Overall loop rate: should be faster than fastest sensor rate
+        self.rate = int(rospy.get_param("~rate", 50))
+        r = rospy.Rate(self.rate)
 
         # Setup topics & services
-
-        self.subscription = self.create_subscription(
-            MotorCommand,
-            'motor_command',
-            self.motor_command_callback,
-            10)
-
-        self.speed_pub = self.create_publisher(MotorVels, 'motor_vels', 10)
-
-        self.encoder_pub = self.create_publisher(EncoderVals, 'encoder_vals', 10)
         
+        rospy.Subscriber("motor_command", MotorCommand, self.motor_command_callback)
+
+        # A cmd_vel publisher so we can stop the robot when shutting down
+        self.speed_pub = rospy.Publisher('motor_vels', MotorVels, queue_size=10)
+        self.encoder_pub = rospy.Publisher('encoder_vals', EncoderVals, queue_size=10)
 
         # Member Variables
 
@@ -66,16 +42,11 @@ class MotorDriver(Node):
 
         self.mutex = Lock()
 
-
         # Open serial comms
 
         print(f"Connecting to port {self.serial_port} at {self.baud_rate}.")
         self.conn = serial.Serial(self.serial_port, self.baud_rate, timeout=1.0)
         print(f"Connected to {self.conn}")
-        
-
-        
-
 
     # Raw serial commands
     
@@ -166,21 +137,25 @@ class MotorDriver(Node):
         self.conn.close()
 
 
-
-def main(args=None):
+if __name__ == '__main__':
     
-    rclpy.init(args=args)
+    rospy.init_node('serial_motor_demo', log_level=rospy.INFO)
+
+    # Get the actual node name in case it is set in the launch file
+    nodename = rospy.get_name()
 
     motor_driver = MotorDriver()
 
-    rate = motor_driver.create_rate(2)
-    while rclpy.ok():
-        rclpy.spin_once(motor_driver)
-        motor_driver.check_encoders()
-
+    idle = rospy.Rate(10)
+    then = rospy.Time.now()
+    
+    ###### main loop  ######
+    while not rospy.is_shutdown():
+      rospy.spinOnce(motor_driver)
+      motor_driver.check_encoders()
+        
+      idle.sleep()    
 
     motor_driver.close_conn()
     motor_driver.destroy_node()
-    rclpy.shutdown()
-
-
+    rospy.shutdown()
