@@ -5,5 +5,6 @@
       <param name="baud_rate" value="57600"/>
       <param name="loop_rate" value="30"/>
       <param name="encoder_cpr" value="1920"/>
+      <param name="serial_debug" value="true"/>
    </node>
 </launch>
