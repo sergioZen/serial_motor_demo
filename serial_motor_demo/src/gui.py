@@ -132,14 +132,16 @@ class MotorGui():
         self.update_scale_limits()
 
     def motor_vel_callback(self, motor_vels):
-        mot_1_spd_rev_sec = motor_vels.mot_1_rad_sec / (2*math.pi)
-        mot_2_spd_rev_sec = motor_vels.mot_2_rad_sec / (2*math.pi)
-        self.mot_1_spd_lbl.config(text=f"{mot_1_spd_rev_sec:.2f}")
-        self.mot_2_spd_lbl.config(text=f"{mot_2_spd_rev_sec:.2f}")
+        self.mot_1_spd_rev_sec = motor_vels.mot_1_rad_sec / (2*math.pi)
+        self.mot_2_spd_rev_sec = motor_vels.mot_2_rad_sec / (2*math.pi)
+        #self.mot_1_spd_lbl.config(text=f"{self.mot_1_spd_rev_sec:.2f}")
+        #self.mot_2_spd_lbl.config(text=f"{self.mot_2_spd_rev_sec:.2f}")
 
     def encoder_val_callback(self, encoder_vals):
-        self.mot_1_enc_lbl.config(text=f"{encoder_vals.mot_1_enc_val}")
-        self.mot_2_enc_lbl.config(text=f"{encoder_vals.mot_2_enc_val}")
+        self.mot_1_enc_val = encoder_vals.mot_1_enc_val
+        self.mot_2_enc_val = encoder_vals.mot_2_enc_val
+        #self.mot_1_enc_lbl.config(text=f"{self.mot_1_enc_val}")
+        #self.mot_2_enc_lbl.config(text=f"{self.mot_2_enc_val}")
 
 
 
@@ -151,14 +153,27 @@ class MotorGui():
             self.m1.config(from_=-255, to=255, resolution=1)
             self.m2.config(from_=-255, to=255, resolution=1)
         else:
-            lim = float(self.slider_max_val_box.get())
-            self.m1.config(from_=-lim, to=lim, resolution=0.1)
-            self.m2.config(from_=-lim, to=lim, resolution=0.1)
+            mode = self.slider_max_val_box.get()
+
+            try:
+               lim = float(mode)
+               self.m1.config(from_=-lim, to=lim, resolution=0.1)
+               self.m2.config(from_=-lim, to=lim, resolution=0.1)
+            except:
+               dd = 0
 
 
 
     def update(self):
-        self.tk.update()
+        
+        try:
+         self.mot_1_spd_lbl.config(text=f"{self.mot_1_spd_rev_sec:.2f}")
+         self.mot_2_spd_lbl.config(text=f"{self.mot_2_spd_rev_sec:.2f}")
+         self.mot_1_enc_lbl.config(text=f"{self.mot_1_enc_val}")
+         self.mot_2_enc_lbl.config(text=f"{self.mot_2_enc_val}")
+         self.tk.update()
+        except:
+         self.tk.update()
 
 
 if __name__ == '__main__':
