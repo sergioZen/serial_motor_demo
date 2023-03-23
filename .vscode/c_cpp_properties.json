@@ -1,0 +1,42 @@
+{
+  "configurations": [
+    {
+      "browse": {
+        "databaseFilename": "${default}",
+        "limitSymbolsToIncludedHeaders": false
+      },
+      "includePath": [
+        "/home/vmros/catkin_ws/devel/include/**",
+        "/opt/ros/noetic/include/**",
+        "/home/vmros/catkin_ws/src/ros_controllers/ackermann_steering_controller/include/**",
+        "/home/vmros/catkin_ws/src/ros_controllers/diff_drive_controller/include/**",
+        "/home/vmros/catkin_ws/src/diffbot/diffbot_base/include/**",
+        "/home/vmros/catkin_ws/src/ros_controllers/effort_controllers/include/**",
+        "/home/vmros/catkin_ws/src/ros_controllers/force_torque_sensor_controller/include/**",
+        "/home/vmros/catkin_ws/src/ros_controllers/forward_command_controller/include/**",
+        "/home/vmros/catkin_ws/src/ros_controllers/four_wheel_steering_controller/include/**",
+        "/home/vmros/catkin_ws/src/ros_controllers/gripper_action_controller/include/**",
+        "/home/vmros/catkin_ws/src/hector_slam/hector_geotiff/include/**",
+        "/home/vmros/catkin_ws/src/hector_slam/hector_map_tools/include/**",
+        "/home/vmros/catkin_ws/src/hector_slam/hector_mapping/include/**",
+        "/home/vmros/catkin_ws/src/hector_slam/hector_marker_drawing/include/**",
+        "/home/vmros/catkin_ws/src/imu_calib/include/**",
+        "/home/vmros/catkin_ws/src/ros_controllers/imu_sensor_controller/include/**",
+        "/home/vmros/catkin_ws/src/imu_to_odom/include/**",
+        "/home/vmros/catkin_ws/src/imu_pipeline/imu_transformer/include/**",
+        "/home/vmros/catkin_ws/src/ros_controllers/joint_state_controller/include/**",
+        "/home/vmros/catkin_ws/src/ros_controllers/joint_trajectory_controller/include/**",
+        "/home/vmros/catkin_ws/src/ros_controllers/position_controllers/include/**",
+        "/home/vmros/catkin_ws/src/urdf_geometry_parser/include/**",
+        "/home/vmros/catkin_ws/src/ros_controllers/velocity_controllers/include/**",
+        "/usr/include/**"
+      ],
+      "name": "ROS",
+      "intelliSenseMode": "gcc-x64",
+      "compilerPath": "/usr/bin/gcc",
+      "cStandard": "gnu11",
+      "cppStandard": "c++14"
+    }
+  ],
+  "version": 4
+}
