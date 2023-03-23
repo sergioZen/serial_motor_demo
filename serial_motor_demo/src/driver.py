@@ -70,7 +70,9 @@ class MotorDriver():
             self.send_pwm_motor_command(motor_command.mot_1_req_rad_sec, motor_command.mot_2_req_rad_sec)
         else:
             # counts per loop = req rads/sec X revs/rad X counts/rev X secs/loop 
-            scaler = (1 / (2*math.pi)) * self.encoder_cpr * (1 / self.encoder_cpr)
+            # SBR:  scaler = (1 / (2*math.pi)) * self.encoder_cpr * (1 / self.encoder_cpr)
+           # scaler = encoder counts per radian 
+            scaler = self.encoder_cpr / (2*math.pi)
             mot1_ct_per_loop = motor_command.mot_1_req_rad_sec * scaler
             mot2_ct_per_loop = motor_command.mot_2_req_rad_sec * scaler
             self.send_feedback_motor_command(mot1_ct_per_loop, mot2_ct_per_loop)
